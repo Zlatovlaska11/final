@@ -1,3 +1,4 @@
+#include "ai_import.h"
 #include "import.h"
 #include <cctype>
 #include <cmath>
@@ -11,10 +12,11 @@
 #include <unistd.h>
 using namespace std;
 class Game {
+private:
+  char board[3][3] = {{'#', '#', '#'}, {'#', '#', '#'}, {'#', '#', '#'}};
+  string boardAsString;
 
 public:
-  char board[3][3] = {{'#', '#', '#'}, {'#', '#', '#'}, {'#', '#', '#'}};
-
   void PrintBoard() {
 
     int width = getConsoleWidth() / 2;
@@ -25,6 +27,14 @@ public:
       }
       cout << '\n';
       cout << string(width - 3, ' ');
+    }
+  }
+
+  void BoardToString() {
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        boardAsString += board[i][j];
+      }
     }
   }
 
@@ -40,8 +50,11 @@ public:
     cout << endl;
     string _move;
 
-    if (isItPLayerTurn) {
+    BoardToString();
 
+    if (isItPLayerTurn) {
+      // add selection ai by accepting one more parameter name dificulty and
+      // deciding by this
       string text = "your move: ";
       cout << string(((getConsoleWidth() / 2) - sizeof(sizeof(text))), ' ') +
                   "insert your move: ";
@@ -54,9 +67,9 @@ public:
         cin >> _move;
       }
     } else {
-      _move = (string)AiMove_easy();
+      _move = GetAiMove(boardAsString);
       while (!CanPlay(_move)) {
-        _move = (string)AiMove_easy();
+        _move = GetAiMove(boardAsString);
       }
     }
 

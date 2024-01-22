@@ -1,5 +1,6 @@
 #include "ai_import.h"
 #include <algorithm>
+#include <curses.h>
 #include <string>
 #include <utility>
 
@@ -21,15 +22,13 @@ public:
       }
     }
   }
-  ~Ai_Hard() { free(moves); }
+  ~Ai_Hard() { delete[] moves; }
 
   bool isFirstMove() {
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
         if (board[i][j] != '#') {
           return false;
-        } else {
-          return true;
         }
       }
     }
@@ -37,7 +36,7 @@ public:
   }
 
   void SelectionOfMove() {
-    if (isFirstMove()) {
+    if (true) {
       moves[0] = 'A';
       moves[1] = '1';
 
@@ -48,9 +47,8 @@ public:
   char *ReturnMove() { return moves; }
 };
 
-int main(int argc, char *argv[]) {
-  Ai_Hard hard("#########");
+string GetAiMove(string brd) {
+  Ai_Hard hard(brd);
   hard.SelectionOfMove();
-  cout << (string)hard.ReturnMove();
-  return 0;
+  return hard.ReturnMove();
 }
