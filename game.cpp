@@ -54,7 +54,10 @@ public:
         cin >> _move;
       }
     } else {
-      // mover method from game.cpp
+      _move = (string)AiMove_easy();
+      while (!CanPlay(_move)) {
+        _move = (string)AiMove_easy();
+      }
     }
 
     int row;
@@ -174,15 +177,15 @@ public:
         // false if is computers move but have to finish this shit
         GetMove('X', true);
       } else {
-        GetMove('O', true);
+        GetMove('o', false);
       }
       round++;
       didSomeOneWin = CheckForWin();
     }
     if (round % 2 == 0) {
-      cout << "PLAYER 1 WON";
+      cout << "PLAYER 2 WON";
     } else {
-      cout << "player 2 won";
+      cout << "player 1 won";
     }
   }
 

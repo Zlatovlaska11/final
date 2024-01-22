@@ -42,7 +42,7 @@ public:
   }
 
 private:
-  string options[4] = {"Start Game 2 players", "2. option", "3. option",
+  string options[4] = {"Start Easy game vs PC", "2. option", "3. option",
                        "4. option"};
 
   void PrintHiglighted(int selection, int arrayLength) {
