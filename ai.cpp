@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <curses.h>
 #include <string>
+#include <unistd.h>
 #include <utility>
 
 using namespace std;
@@ -27,7 +28,7 @@ public:
   bool isFirstMove() {
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
-        if (board[i][j] != '#') {
+        if (board[i][j] == 'O') {
           return false;
         }
       }
@@ -36,7 +37,7 @@ public:
   }
 
   void SelectionOfMove() {
-    if (true) {
+    if (isFirstMove()) {
       moves[0] = 'A';
       moves[1] = '1';
 
@@ -50,5 +51,7 @@ public:
 string GetAiMove(string brd) {
   Ai_Hard hard(brd);
   hard.SelectionOfMove();
+  hard.isFirstMove();
+  sleep(1);
   return hard.ReturnMove();
 }

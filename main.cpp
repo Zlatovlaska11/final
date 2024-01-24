@@ -74,6 +74,7 @@ public:
   }
 
   int PrintFullMenu() {
+
     int arrayLength = sizeof(options) / sizeof(string);
     int currentSelection = 0;
     char keypress = 80;
