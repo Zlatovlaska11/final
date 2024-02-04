@@ -1,5 +1,6 @@
 #include "ai_import.h"
 #include <algorithm>
+#include <climits>
 #include <cmath>
 #include <cstddef>
 #include <curses.h>
@@ -103,6 +104,7 @@ private:
     return arrSize;
   }
   void posibleMoves(string moves[]) {
+
     int arrPosition = 0;
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
@@ -115,30 +117,64 @@ private:
       }
     }
   }
-  void Result(string action, char player) {
+  string Result(string action, char player) {
+    string boardAsString = "";
     if (board[action[0]][action[1]] == '#') {
-      boardAfterAction[action[0]][action[1]] = player;
-    } else {
-      throw "TF";
+      for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+          boardAsString += board[i][j];
+        }
+      }
     }
+    return boardAsString;
+  }
+
+  char **ExtractBoard(string action, char player) {
+    string boardStr = Result(action, player);
+
+    char **boardArr = new char *[3];
+
+    for (int i = 0; i < 3; ++i) {
+      boardArr[i] = new char[3];
+    }
+    int place = 0;
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        boardArr[i][j] = boardStr[place++];
+      }
+    }
+    return boardArr;
   }
 
 public:
-  int MiniMax() {
+  int MiniMax(string boardStr) {
     if (eval() != 100) { // non terminal state
       return eval();
     }
 
+    int bestVal INT_MIN;
     int value;
 
-    if (MaxingPlayerTurn()) {
-      string moves[arrSize()];
-      posibleMoves(moves);
+    string moves[arrSize()];
+    posibleMoves(moves);
 
-      for (string move : moves) { // finish the code for the minimax alg using
-                                  // the pseudo code in the video and than test
-                                  // it and write a test module for it
+    if (MaxingPlayerTurn()) {
+
+      for (string move : moves) {
+        value = MiniMax(Result(move, 'X'));
+        bestVal = max(bestVal, value);
+        // unfinished minimax alg finish tmrw
       }
+      return bestVal;
+
+    } else {
+      bestVal = INT_MAX;
+
+      for (string move : moves) {
+        value = MiniMax(Result(move, 'O'));
+        bestVal = min(bestVal, value);
+      }
+      return bestVal;
     }
   }
 
@@ -152,8 +188,9 @@ public:
 };
 
 int main(int argc, char *argv[]) {
-  char board[3][3] = {{'O', 'O', 'O'}, {'O', 'O', '#'}, {'#', '#', '#'}};
+  char board[3][3] = {{'#', '#', '#'}, {'#', '#', '#'}, {'#', '#', '#'}};
+  string brd = "XX#O#####";
   minmaxAi minmax(board);
-  cout << minmax.MiniMax();
+  cout << minmax.MiniMax(brd);
   return 0;
 }
