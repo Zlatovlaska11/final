@@ -1,5 +1,6 @@
 #include "ai_import.h"
 #include <algorithm>
+#include <cmath>
 #include <cstddef>
 #include <curses.h>
 #include <list>
@@ -90,7 +91,7 @@ private:
   //}
   //}
   //}
-  void posibleMoves() {
+  int arrSize() {
     int arrSize = 0;
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
@@ -99,16 +100,17 @@ private:
         }
       }
     }
+    return arrSize;
+  }
+  void posibleMoves(string moves[]) {
     int arrPosition = 0;
-    int sqare = 0;
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
-        sqare++;
         if (board[i][j] == '#') {
           string move = "";
           move += i;
           move += j;
-          moves.push_back(move);
+          moves[arrPosition] = move;
         }
       }
     }
@@ -126,7 +128,18 @@ public:
     if (eval() != 100) { // non terminal state
       return eval();
     }
-    return 0;
+
+    int value;
+
+    if (MaxingPlayerTurn()) {
+      string moves[arrSize()];
+      posibleMoves(moves);
+
+      for (string move : moves) { // finish the code for the minimax alg using
+                                  // the pseudo code in the video and than test
+                                  // it and write a test module for it
+      }
+    }
   }
 
   minmaxAi(char board[3][3]) {
@@ -139,7 +152,7 @@ public:
 };
 
 int main(int argc, char *argv[]) {
-  char board[3][3] = {{'O', 'O', 'O'}, {'X', 'X', '#'}, {'#', '#', '#'}};
+  char board[3][3] = {{'O', 'O', 'O'}, {'O', 'O', '#'}, {'#', '#', '#'}};
   minmaxAi minmax(board);
   cout << minmax.MiniMax();
   return 0;
