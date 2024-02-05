@@ -149,8 +149,11 @@ public:
     int bestVal INT_MIN;
     int value;
 
-    string moves[arrSize()];
-    posibleMoves();
+    vector<string> tmpMoves = posibleMoves();
+
+    string moves[tmpMoves.size()];
+
+    copy(tmpMoves.begin(), tmpMoves.end(), moves);
 
     if (MaxingPlayerTurn()) {
 
