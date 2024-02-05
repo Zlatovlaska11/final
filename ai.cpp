@@ -1,21 +1,16 @@
-#include "ai_import.h"
 #include <algorithm>
 #include <climits>
-#include <cmath>
-#include <cstddef>
 #include <curses.h>
-#include <list>
+#include <iostream>
 #include <string>
 #include <unistd.h>
-#include <utility>
+#include <vector>
 using namespace std;
 
 class minmaxAi {
 private:
   char board[3][3];
   char boardAfterAction[3][3];
-
-  list<string> moves;
 
   bool isTerminalState(char player) {
     for (int i = 0; i < 3; ++i) {
@@ -103,47 +98,46 @@ private:
     }
     return arrSize;
   }
-  void posibleMoves(string moves[]) {
-
+  vector<string> posibleMoves() {
     int arrPosition = 0;
+    vector<string> moves;
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
         if (board[i][j] == '#') {
-          string move = "";
-          move += i;
-          move += j;
-          moves[arrPosition] = move;
+          string move = to_string(i) + to_string(j);
+          moves.push_back(move);
         }
       }
     }
+    return moves;
   }
+
   string Result(string action, char player) {
     string boardAsString = "";
-    if (board[action[0]][action[1]] == '#') {
+
+    // Create a temporary copy of the board
+    char tempBoard[3][3];
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        tempBoard[i][j] = board[i][j];
+      }
+    }
+
+    int row = action[0] - '0';
+    int col = action[1] - '0';
+
+    if (tempBoard[row][col] == '#') {
+      // Update the temporary board
+      tempBoard[row][col] = player;
+
+      // Convert the updated temporary board to a string
       for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
-          boardAsString += board[i][j];
+          boardAsString += tempBoard[i][j];
         }
       }
     }
     return boardAsString;
-  }
-
-  char **ExtractBoard(string action, char player) {
-    string boardStr = Result(action, player);
-
-    char **boardArr = new char *[3];
-
-    for (int i = 0; i < 3; ++i) {
-      boardArr[i] = new char[3];
-    }
-    int place = 0;
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 3; j++) {
-        boardArr[i][j] = boardStr[place++];
-      }
-    }
-    return boardArr;
   }
 
 public:
@@ -156,7 +150,7 @@ public:
     int value;
 
     string moves[arrSize()];
-    posibleMoves(moves);
+    posibleMoves();
 
     if (MaxingPlayerTurn()) {
 
@@ -178,6 +172,10 @@ public:
     }
   }
 
+  int evaluate_board(const string &current_board) {
+    return MiniMax(current_board);
+  }
+
   minmaxAi(char board[3][3]) {
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
@@ -191,6 +189,6 @@ int main(int argc, char *argv[]) {
   char board[3][3] = {{'#', '#', '#'}, {'#', '#', '#'}, {'#', '#', '#'}};
   string brd = "XX#O#####";
   minmaxAi minmax(board);
-  cout << minmax.MiniMax(brd);
+  std::cout << minmax.evaluate_board(brd);
   return 0;
 }

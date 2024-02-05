@@ -24,7 +24,7 @@ char *AiMove_easy() {
   int row = rand() % 3 + 1;
 
   char *resp = new char[2];
-
+  
   switch (col) {
   case 1:
     resp[0] = 'A';
