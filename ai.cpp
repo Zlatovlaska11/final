@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <unistd.h>
+#include <utility>
 #include <vector>
 using namespace std;
 
@@ -141,8 +142,51 @@ private:
     return boardAsString;
   }
 
+  pair<int, int> ConvertMove(char move) {
+    pair<int, int> moves;
+    switch (move) {
+    case '1':
+      moves.first = 0;
+      moves.second = 0;
+      break;
+    case '2':
+      moves.first = 0;
+      moves.second = 1;
+      break;
+    case '3':
+      moves.first = 0;
+      moves.second = 2;
+      break;
+    case '4':
+      moves.first = 1;
+      moves.second = 0;
+      break;
+    case '5':
+      moves.first = 1;
+      moves.second = 1;
+      break;
+    case '6':
+      moves.first = 1;
+      moves.second = 2;
+      break;
+    case '7':
+      moves.first = 2;
+      moves.second = 0;
+      break;
+    case '8':
+      moves.first = 2;
+      moves.second = 1;
+      break;
+    case '9':
+      moves.first = 2;
+      moves.second = 2;
+      break;
+    }
+    return moves;
+  }
+
 public:
-  int MiniMax(string boardStr) {
+  int MiniMax(char boardCurrent[3][3], bool MaxingPlayer) {
     if (eval() != 100) { // non terminal state
       return eval();
     }
@@ -150,32 +194,44 @@ public:
     int bestVal INT_MIN;
     int value;
 
-    vector<string> tmpMoves = posibleMoves();
-
     // string parsing error
 
-    if (MaxingPlayerTurn()) {
+    if (MaxingPlayer) {
 
-      for (string move : tmpMoves) {
-        value = MiniMax(Result(move, 'X'));
-        bestVal = max(bestVal, value);
+      for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+          if (boardCurrent[i][j] == '#') {
+            boardCurrent[i][j] = 'X';
+            value = MiniMax(boardCurrent, false);
+            boardCurrent[i][j] = '#';
+            bestVal = max(bestVal, value);
+          }
+        }
         // unfinished minimax alg finish tmrw
       }
-      return bestVal;
 
+      return bestVal;
     } else {
-      bestVal = INT_MAX;
+      int minVal = INT_MAX;
 
-      for (string move : tmpMoves) {
-        value = MiniMax(Result(move, 'O'));
-        bestVal = min(bestVal, value);
+      for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+          if (boardCurrent[i][j] == '#') {
+            boardCurrent[i][j] = 'O';
+            value = MiniMax(boardCurrent, true);
+            boardCurrent[i][j] = '#';
+            bestVal = min(bestVal, value);
+          }
+        }
+        // unfinished minimax alg finish tmrw
       }
-      return bestVal;
+
+      return minVal;
     }
   }
 
-  int evaluate_board(const string &current_board) {
-    return MiniMax(current_board);
+  int evaluate_board(char boardCurrent[3][3], bool maxPlayr) {
+    return MiniMax(boardCurrent, maxPlayr);
   }
 
   minmaxAi(char board[3][3]) {
@@ -191,6 +247,6 @@ int main(int argc, char *argv[]) {
   char board[3][3] = {{'X', 'X', '#'}, {'O', 'O', '#'}, {'#', '#', '#'}};
   string brd = "XX#OO####";
   minmaxAi minmax(board);
-  std::cout << minmax.evaluate_board(brd);
+  std::cout << minmax.evaluate_board(board, true);
   return 0;
 }
