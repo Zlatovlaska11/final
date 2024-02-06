@@ -152,14 +152,11 @@ public:
 
     vector<string> tmpMoves = posibleMoves();
 
-    string moves[tmpMoves.size()];
-
-    copy(tmpMoves.begin(), tmpMoves.end(), moves);
     // string parsing error
 
     if (MaxingPlayerTurn()) {
 
-      for (string move : moves) {
+      for (string move : tmpMoves) {
         value = MiniMax(Result(move, 'X'));
         bestVal = max(bestVal, value);
         // unfinished minimax alg finish tmrw
@@ -169,7 +166,7 @@ public:
     } else {
       bestVal = INT_MAX;
 
-      for (string move : moves) {
+      for (string move : tmpMoves) {
         value = MiniMax(Result(move, 'O'));
         bestVal = min(bestVal, value);
       }
@@ -191,8 +188,8 @@ public:
 };
 
 int main(int argc, char *argv[]) {
-  char board[3][3] = {{'#', '#', '#'}, {'#', '#', '#'}, {'#', '#', '#'}};
-  string brd = "XX#O#####";
+  char board[3][3] = {{'X', 'X', '#'}, {'O', 'O', '#'}, {'#', '#', '#'}};
+  string brd = "XX#OO####";
   minmaxAi minmax(board);
   std::cout << minmax.evaluate_board(brd);
   return 0;
