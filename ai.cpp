@@ -1,11 +1,9 @@
+#include "ai_import.h"
 #include <algorithm>
 #include <climits>
 #include <curses.h>
-#include <iostream>
-#include <string>
 #include <unistd.h>
 #include <utility>
-#include <vector>
 using namespace std;
 
 class minmaxAi {
@@ -24,13 +22,25 @@ private:
     }
 
     // Check diagonals
-    if ((board[0][0] == board[1][1] && board[1][1] == board[2][2] &&
-         board[0][0] == player) ||
-        (board[0][2] == board[1][1] && board[1][1] == board[2][0] &&
-         board[0][2] == player)) {
-      return true;
+    // Check main diagonal
+    bool mainDiagonal = true;
+    for (int i = 0; i < 3; ++i) {
+      if (board[i][i] != player) {
+        mainDiagonal = false;
+        break;
+      }
     }
-    return false;
+
+    // Check antidiagonal
+    bool antiDiagonal = true;
+    for (int i = 0; i < 3; ++i) {
+      if (board[i][2 - i] != player) {
+        antiDiagonal = false;
+        break;
+      }
+    }
+
+    return mainDiagonal || antiDiagonal;
   }
   bool IsBoardFull(char board[3][3]) {
     for (int i = 0; i < 3; i++) {
@@ -77,24 +87,21 @@ public:
 
     // cout << evaluation << endl;
 
-    if (eval(boardCurrent) != 100) { // non terminal state
-      return eval(boardCurrent);
+    if (evaluation != 100) { // non terminal state
+      return evaluation;
     }
-
-    int bestVal = INT_MIN;
-    int value;
 
     // string parsing error
 
     if (MaxingPlayer) {
-
+      int bestVal = INT_MIN;
       for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
           if (boardCurrent[i][j] == '#') {
             boardCurrent[i][j] = 'X';
-            value = MiniMax(boardCurrent, false);
+            int value = MiniMax(boardCurrent, false);
             boardCurrent[i][j] = '#';
-            bestVal = max(bestVal, value);
+            bestVal = std::max(bestVal, value);
           }
         }
       }
@@ -106,9 +113,9 @@ public:
         for (int j = 0; j < 3; ++j) {
           if (boardCurrent[i][j] == '#') {
             boardCurrent[i][j] = 'O';
-            value = MiniMax(boardCurrent, true);
+            int value = MiniMax(boardCurrent, true);
             boardCurrent[i][j] = '#';
-            minVal = min(minVal, value);
+            minVal = std::min(minVal, value);
           }
         }
         // unfinished minimax alg finish tmrw
@@ -116,8 +123,27 @@ public:
       return minVal;
     }
   }
-  pair<int, int> GetBestMove(char board[3][3], bool maxingPlayer) {
+  pair<int, int> GetBestMove(char board[3][3], bool maxingPlayer, char player) {
     pair<int, int> BestMoves;
+
+    int BestEval = (player == 'X') ? INT_MIN : INT_MAX;
+    int eval;
+
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        if (board[i][j] == '#') {
+          board[i][j] = player;
+          int eval = MiniMax(board, maxingPlayer);
+          board[i][j] = '#';
+          if ((player == 'X' && BestEval < eval) ||
+              (player == 'O' && eval < BestEval)) {
+            BestEval = eval;
+            BestMoves.first = i;
+            BestMoves.second = j;
+          }
+        }
+      }
+    }
 
     return BestMoves;
   }
@@ -127,9 +153,26 @@ public:
   }
 };
 
-int main(int argc, char *argv[]) {
-  char board[3][3] = {{'X', 'X', '#'}, {'O', 'O', '#'}, {'X', '#', '#'}};
-  minmaxAi minmax;
-  std::cout << minmax.evaluate_board(board, false);
-  return 0;
+pair<int, int> GetBestMove(char board[3][3], bool MaxingPlayerTurn,
+                           char player) {
+  minmaxAi ai;
+  pair<int, int> bestMove = ai.GetBestMove(board, MaxingPlayerTurn, player);
+
+  return bestMove;
 }
+
+// int main(int argc, char *argv[]) {
+//   char board[3][3] = {{'X', 'O', 'X'}, {'O', 'X', 'O'}, {'O', '#', '#'}};
+//   minmaxAi ai;
+//   cout << ai.evaluate_board(board, true) << '\n';
+//   pair<int, int> moves = GetBestMove(board, true, 'O');
+//   board[moves.first][moves.second] = '@';
+//
+//   for (int i = 0; i < 3; i++) {
+//     for (int j = 0; j < 3; j++) {
+//       cout << board[i][j];
+//     }
+//     cout << '\n';
+//   }
+//   return 0;
+// }
