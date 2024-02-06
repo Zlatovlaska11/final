@@ -113,6 +113,7 @@ private:
   }
 
   string Result(string action, char player) {
+
     string boardAsString = "";
 
     // Create a temporary copy of the board
@@ -154,6 +155,7 @@ public:
     string moves[tmpMoves.size()];
 
     copy(tmpMoves.begin(), tmpMoves.end(), moves);
+    // string parsing error
 
     if (MaxingPlayerTurn()) {
 
