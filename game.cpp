@@ -1,8 +1,5 @@
 #include "ai_import.h"
 #include "import.h"
-#include <cctype>
-#include <cmath>
-#include <cstdio>
 #include <curses.h>
 #include <iostream>
 #include <ncurses.h>
@@ -50,7 +47,8 @@ public:
     cout << endl;
     string _move;
 
-    BoardToString();
+    int row;
+    int col;
 
     if (isItPLayerTurn) {
       // add selection ai by accepting one more parameter name dificulty and
@@ -63,51 +61,47 @@ public:
 
       while (!CanPlay(_move)) {
         cout << "invalid move select another: ";
-
         cin >> _move;
       }
-    } else {
-      _move = GetAiMove(boardAsString);
-      while (!CanPlay(_move)) {
-        _move = GetAiMove(boardAsString);
+
+      switch (_move[0]) {
+      case 'A':
+        row = 0;
+        break;
+      case 'B':
+        row = 1;
+        break;
+      case 'C':
+        row = 2;
+        break;
+      case 'a':
+        row = 0;
+        break;
+      case 'b':
+        row = 1;
+        break;
+      case 'c':
+        row = 2;
+        break;
       }
-    }
 
-    int row;
-    switch (_move[0]) {
-    case 'A':
-      row = 0;
-      break;
-    case 'B':
-      row = 1;
-      break;
-    case 'C':
-      row = 2;
-      break;
-    case 'a':
-      row = 0;
-      break;
-    case 'b':
-      row = 1;
-      break;
-    case 'c':
-      row = 2;
-      break;
-    }
-
-    int col;
-    switch (_move[1]) {
-    case '1':
-      col = 0;
-      break;
-    case '2':
-      col = 1;
-      break;
-    case '3':
-      col = 2;
-      break;
-    default:
-      break;
+      switch (_move[1]) {
+      case '1':
+        col = 0;
+        break;
+      case '2':
+        col = 1;
+        break;
+      case '3':
+        col = 2;
+        break;
+      default:
+        break;
+      }
+    } else {
+      pair<int, int> move = GetBestMove(board, true, player);
+      row = move.first;
+      col = move.second;
     }
 
     board[row][col] = player;
@@ -178,19 +172,29 @@ public:
 
     return false;
   }
+  bool isBoardFull() {
+    for (int i = 0; i < 3; ++i) {
+      for (int j = 0; j < 3; ++j) {
+        if (board[i][j] == '#') {
+          return false; // Board is not full
+        }
+      }
+    }
+    return true; // Board is full
+  }
 
   void GameLoop() {
     int round = 0;
 
     bool didSomeOneWin = CheckForWin();
-    while (!didSomeOneWin) {
+    while (!didSomeOneWin || isBoardFull()) {
 
       if (round % 2 == 0) {
         // IMPORTANT //
         // false if is computers move but have to finish this shit
         GetMove('X', true);
       } else {
-        GetMove('o', false);
+        GetMove('O', false);
       }
       round++;
       didSomeOneWin = CheckForWin();
