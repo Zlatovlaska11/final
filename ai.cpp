@@ -1,7 +1,10 @@
 #include "ai_import.h"
 #include <algorithm>
+#include <chrono>
 #include <climits>
+#include <ctime>
 #include <curses.h>
+#include <thread>
 #include <unistd.h>
 #include <utility>
 using namespace std;
@@ -157,7 +160,7 @@ pair<int, int> GetBestMove(char board[3][3], bool MaxingPlayerTurn,
                            char player) {
   minmaxAi ai;
   pair<int, int> bestMove = ai.GetBestMove(board, MaxingPlayerTurn, player);
-
+  sleep(1);
   return bestMove;
 }
 

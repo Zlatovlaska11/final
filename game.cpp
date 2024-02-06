@@ -1,6 +1,5 @@
 #include "ai_import.h"
 #include "import.h"
-#include <cstdlib>
 #include <curses.h>
 #include <iostream>
 #include <ncurses.h>
@@ -211,11 +210,13 @@ public:
     int round = 0;
 
     bool didSomeOneWin = CheckForWin();
-    while (!didSomeOneWin || isBoardFull()) {
-
+    while (!didSomeOneWin) {
       if (round % 2 == 0) {
         // IMPORTANT //
         // false if is computers move but have to finish this shit
+        if (isBoardFull()) {
+          break;
+        }
         GetMove('X', true);
       } else {
         GetMove('O', false);
