@@ -1,5 +1,6 @@
 #include "ai_import.h"
 #include "import.h"
+#include <cstdlib>
 #include <curses.h>
 #include <iostream>
 #include <ncurses.h>
@@ -14,16 +15,34 @@ private:
   string boardAsString;
 
 public:
-  void PrintBoard() {
-
+  void DisplayBoard(char board[3][3]) {
     int width = getConsoleWidth() / 2;
-    cout << string(width - 3, ' ');
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
-        cout << board[i][j] << ' ';
+        if (board[i][j] == '#') {
+          board[i][j] = ' ';
+        }
       }
-      cout << '\n';
-      cout << string(width - 3, ' ');
+    }
+
+    std::cout << string(width - 9, ' ') << "      1   2   3" << std::endl;
+    std::cout << string(width - 9, ' ') << "    ╔═══╦═══╦═══╗" << std::endl;
+    std::cout << string(width - 9, ' ') << " A  ║ " << board[0][0] << " ║ "
+              << board[0][1] << " ║ " << board[0][2] << " ║" << std::endl;
+    std::cout << string(width - 9, ' ') << "    ╠═══╬═══╬═══╣" << std::endl;
+    std::cout << string(width - 9, ' ') << " B  ║ " << board[1][0] << " ║ "
+              << board[1][1] << " ║ " << board[1][2] << " ║" << std::endl;
+    std::cout << string(width - 9, ' ') << "    ╠═══╬═══╬═══╣" << std::endl;
+    std::cout << string(width - 9, ' ') << " C  ║ " << board[2][0] << " ║ "
+              << board[2][1] << " ║ " << board[2][2] << " ║" << std::endl;
+    std::cout << string(width - 9, ' ') << "    ╚═══╩═══╩═══╝" << std::endl;
+
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        if (board[i][j] == ' ') {
+          board[i][j] = '#';
+        }
+      }
     }
   }
 
@@ -43,7 +62,7 @@ public:
 
   void GetMove(char player, bool isItPLayerTurn) {
     PrintLogo();
-    PrintBoard();
+    DisplayBoard(board);
     cout << endl;
     string _move;
 
@@ -60,7 +79,12 @@ public:
       cin >> _move;
 
       while (!CanPlay(_move)) {
-        cout << "invalid move select another: ";
+        cout << "\033[2J\033[1;1H";
+        PrintLogo();
+        DisplayBoard(board);
+        cout << '\n'
+             << string((getConsoleWidth() / 2) - 12, ' ')
+             << "invalid move select another: ";
         cin >> _move;
       }
 
@@ -199,7 +223,9 @@ public:
       round++;
       didSomeOneWin = CheckForWin();
     }
-    if (round % 2 == 0) {
+    if (isBoardFull()) {
+      cout << "ITS A DRAW";
+    } else if (round % 2 == 0) {
       cout << "PLAYER 2 WON";
     } else {
       cout << "player 1 won";
