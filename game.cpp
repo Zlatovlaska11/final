@@ -1,7 +1,6 @@
 #include "ai_import.h"
 #include "import.h"
 #include <curses.h>
-#include <exception>
 #include <iostream>
 #include <ncurses.h>
 #include <ostream>
@@ -133,7 +132,7 @@ public:
     cout << "\033[2J\033[1;1H";
   }
 
-  bool CanPlay(string &move) const {
+  bool CanPlay(string &move) {
     int row, col;
 
     switch (move[0]) {
@@ -268,8 +267,6 @@ public:
       GameLoop();
     }
   }
-  // write a method to check for win and calculate which sign to place in the
-  // array by counting the rounds and deviding by two
 };
 
 void StartGame() {
