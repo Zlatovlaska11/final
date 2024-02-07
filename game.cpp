@@ -7,6 +7,7 @@
 #include <string>
 #include <sys/ioctl.h>
 #include <unistd.h>
+
 using namespace std;
 class Game {
 private:
@@ -252,20 +253,47 @@ public:
     PrintLogo();
 
     if (isBoardFull()) {
-
-      cout << string(getConsoleWidth() / 2, ' ') << "ITS A DRAW";
+      cout << string((getConsoleWidth() / 2) - 5, ' ') << "ITS A DRAW";
     } else if (round % 2 == 0) {
-      cout << string(getConsoleWidth() / 2, ' ') << "PLAYER 2 WON";
+      cout << string((getConsoleWidth() / 2) - 5, ' ') << "PLAYER 2 WON";
     } else {
-      cout << string(getConsoleWidth() / 2, ' ') << "player 1 won";
+      cout << string((getConsoleWidth() / 2) - 5, ' ') << "PLAYER 1 WON";
     }
-    sleep((double)0.5);
+
+    // wait for enter press and than ask to play again
+    //! ADD BOARD HIGHLIGHTING AFTER WIN TO SHOW HOW WIN WAS ACHIEVD
+    // bool wannaPlayAgain = playagain();
+
+    cout << '\n'
+         << string((getConsoleWidth() / 2) - 10, ' ')
+         << "Press Enter To continue";
+
+    initscr();
+
+    curs_set(0);
+
+    keypad(stdscr, TRUE);
+
+    cbreak();
+
+    getch();
+
+    // End the ncurses mode
+    endwin();
+
+    cout << "\033[2J\033[1;1H";
 
     if (playagain()) {
       ResetBoard(board);
-      cout << "\033[2J\033[1;1H";
       GameLoop();
     }
+    // PrintLogo();
+    //  cout << ch;
+    //   if (wannaPlayAgain) {
+    //     ResetBoard(board);
+    //     cout << "\033[2J\033[1;1H";
+    //     GameLoop();
+    //   }
   }
 };
 
