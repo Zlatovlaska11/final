@@ -1,17 +1,13 @@
 #include "ai_import.h"
 #include <algorithm>
-#include <chrono>
 #include <climits>
-#include <ctime>
 #include <curses.h>
-#include <thread>
 #include <unistd.h>
 #include <utility>
 using namespace std;
 
 class minmaxAi {
 private:
-  // char board[3][3];
   char boardAfterAction[3][3];
 
   bool isTerminalState(char player, char board[3][3]) {
@@ -24,8 +20,6 @@ private:
       }
     }
 
-    // Check diagonals
-    // Check main diagonal
     bool mainDiagonal = true;
     for (int i = 0; i < 3; ++i) {
       if (board[i][i] != player) {
@@ -34,7 +28,6 @@ private:
       }
     }
 
-    // Check antidiagonal
     bool antiDiagonal = true;
     for (int i = 0; i < 3; ++i) {
       if (board[i][2 - i] != player) {
@@ -88,13 +81,9 @@ public:
 
     int evaluation = eval(boardCurrent);
 
-    // cout << evaluation << endl;
-
     if (evaluation != 100) { // non terminal state
       return evaluation;
     }
-
-    // string parsing error
 
     if (MaxingPlayer) {
       int bestVal = INT_MIN;
@@ -121,7 +110,6 @@ public:
             minVal = std::min(minVal, value);
           }
         }
-        // unfinished minimax alg finish tmrw
       }
       return minVal;
     }
@@ -163,19 +151,3 @@ pair<int, int> GetBestMove(char board[3][3], bool MaxingPlayerTurn,
   sleep(1);
   return bestMove;
 }
-
-// int main(int argc, char *argv[]) {
-//   char board[3][3] = {{'X', 'O', 'X'}, {'O', 'X', 'O'}, {'O', '#', '#'}};
-//   minmaxAi ai;
-//   cout << ai.evaluate_board(board, true) << '\n';
-//   pair<int, int> moves = GetBestMove(board, true, 'O');
-//   board[moves.first][moves.second] = '@';
-//
-//   for (int i = 0; i < 3; i++) {
-//     for (int j = 0; j < 3; j++) {
-//       cout << board[i][j];
-//     }
-//     cout << '\n';
-//   }
-//   return 0;
-// }

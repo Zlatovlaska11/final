@@ -1,6 +1,7 @@
 #include "ai_import.h"
 #include "import.h"
 #include <curses.h>
+#include <exception>
 #include <iostream>
 #include <ncurses.h>
 #include <ostream>
@@ -71,9 +72,9 @@ public:
     if (isItPLayerTurn) {
       // add selection ai by accepting one more parameter name dificulty and
       // deciding by this
-      string text = "your move: ";
-      cout << string(((getConsoleWidth() / 2) - sizeof(sizeof(text))), ' ') +
-                  "insert your move: ";
+      const string text = "inert your move: ";
+      cout << string(((getConsoleWidth() / 2) - sizeof(sizeof(text))), ' ')
+           << text;
 
       cin >> _move;
 
@@ -206,14 +207,39 @@ public:
     return true; // Board is full
   }
 
+  bool playagain() {
+
+    int width = getConsoleWidth() / 2;
+
+    cout << "\033[2J\033[1;1H";
+
+    string text = "wanna play again: ";
+
+    PrintLogo();
+
+    char selection;
+
+    cout << string(width - text.length(), ' ') << text;
+
+    cin >> selection;
+
+    return (selection == 'y') ? true : false;
+  }
+
+  void ResetBoard(char board[3][3]) {
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        board[i][j] = '#';
+      }
+    }
+  }
+
   void GameLoop() {
     int round = 0;
 
     bool didSomeOneWin = CheckForWin();
     while (!didSomeOneWin) {
       if (round % 2 == 0) {
-        // IMPORTANT //
-        // false if is computers move but have to finish this shit
         if (isBoardFull()) {
           break;
         }
@@ -224,12 +250,22 @@ public:
       round++;
       didSomeOneWin = CheckForWin();
     }
+    PrintLogo();
+
     if (isBoardFull()) {
-      cout << "ITS A DRAW";
+
+      cout << string(getConsoleWidth() / 2, ' ') << "ITS A DRAW";
     } else if (round % 2 == 0) {
-      cout << "PLAYER 2 WON";
+      cout << string(getConsoleWidth() / 2, ' ') << "PLAYER 2 WON";
     } else {
-      cout << "player 1 won";
+      cout << string(getConsoleWidth() / 2, ' ') << "player 1 won";
+    }
+    sleep((double)0.5);
+
+    if (playagain()) {
+      ResetBoard(board);
+      cout << "\033[2J\033[1;1H";
+      GameLoop();
     }
   }
 
