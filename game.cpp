@@ -268,7 +268,6 @@ public:
       GameLoop();
     }
   }
-
   // write a method to check for win and calculate which sign to place in the
   // array by counting the rounds and deviding by two
 };
