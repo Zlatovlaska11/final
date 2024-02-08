@@ -1,5 +1,6 @@
 #include "ai_import.h"
 #include "import.h"
+#include <cmath>
 #include <curses.h>
 #include <iostream>
 #include <ncurses.h>
@@ -444,7 +445,20 @@ public:
       round++;
       didSomeOneWin = CheckForWin();
     }
-    PrintLogo();
+    if (CheckForWin()) {
+      PrintLogo();
+
+      cout << "\033[2J\033[1;1H";
+
+      PrintLogo();
+
+      Settings set;
+
+      set.PrintHiglitedBoard(board, (round % 2 != 0) ? 'X' : 'O');
+
+    } else {
+      DisplayBoard(board);
+    }
 
     cout << '\n';
     if (isBoardFull()) {
@@ -454,8 +468,6 @@ public:
     } else {
       cout << string((getConsoleWidth() / 2) - 5, ' ') << "PLAYER 1 WON";
     }
-
-    //! ADD BOARD HIGHLIGHTING AFTER WIN TO SHOW HOW WIN WAS ACHIEVD
 
     cout << '\n'
          << string((getConsoleWidth() / 2) - 10, ' ')
@@ -475,27 +487,8 @@ public:
 
     cout << "\033[2J\033[1;1H";
 
-    PrintLogo();
-
-    Settings set;
-
-    set.PrintHiglitedBoard(board, 'X');
-
-    initscr();
-
-    curs_set(0);
-
-    keypad(stdscr, TRUE);
-
-    cbreak();
-
-    getch();
-
-    endwin();
-
-    cout << "\033[2J\033[1;1H";
-
     if (playagain()) {
+      cout << "\033[2J\033[1;1H";
       ResetBoard(board);
       GameLoop(dif);
     } else {

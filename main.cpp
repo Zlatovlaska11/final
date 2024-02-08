@@ -36,14 +36,14 @@ public:
 
       cout << Red;
     }
-    std::cout << std::setw(leadingSpaces + text.length()) << text << std::endl;
+    std::cout << std::setw(leadingSpaces + text.length()) << text << std::endl
+              << std::endl;
 
     cout << RESET;
   }
 
 private:
-  string options[4] = {"Start Easy game vs PC", "Start Hard Game vs PC",
-                       "2 Player Mode", "Settings"};
+  string options[4] = {"Easy PC", "Hard PC", "2 Player Mode"};
 
   void PrintHiglighted(int selection, int arrayLength) {
     for (int i = 0; i < arrayLength; i++) {
@@ -127,7 +127,7 @@ public:
   Select(int selection) { this->selection = selection; };
 
   void Selector() {
-    if (selection < 3) {
+    if (selection < 4) {
       cout << "\033[2J\033[1;1H";
       StartGame(selection);
     } else {

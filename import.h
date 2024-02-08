@@ -9,5 +9,3 @@ void PrintLogo();
 char *AiMove_easy();
 
 void CallWholeMenu();
-
-// Declaration for PrintHiglitedWin function
