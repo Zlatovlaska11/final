@@ -1,6 +1,5 @@
 #include "ai_import.h"
 #include "import.h"
-#include <ctime>
 #include <curses.h>
 #include <iostream>
 #include <ncurses.h>
@@ -276,6 +275,7 @@ public:
     }
     PrintLogo();
 
+    cout << '\n';
     if (isBoardFull()) {
       cout << string((getConsoleWidth() / 2) - 5, ' ') << "ITS A DRAW";
     } else if (round % 2 == 0) {
@@ -302,6 +302,8 @@ public:
 
     endwin();
 
+    PrintHiglitedBoard(board, (round % 2 == 0) ? 'X' : 'O');
+
     cout << "\033[2J\033[1;1H";
 
     if (playagain()) {
@@ -309,8 +311,7 @@ public:
       GameLoop(dif);
     } else {
       cout << "\033[2J\033[1;1H";
-      CallWhileMenu();
-      // add entry for main menu
+      CallWholeMenu();
     }
   }
 };

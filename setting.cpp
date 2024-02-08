@@ -1,16 +1,15 @@
-#include <algorithm>
-#include <bits/types/cookie_io_functions_t.h>
-#include <cstdlib>
+#include "import.h"
 #include <iostream>
+#include <ostream>
 #include <string>
-#include <tuple>
-#include <utility>
-#include <variant>
+#include <sys/ioctl.h>
+#include <unistd.h>
 #include <vector>
 
 using namespace std;
 
 const std::string red("\033[0;31m");
+const std::string reset("\033[0m");
 
 vector<string> GetWinnigPatter(char board[3][3], char winner) {
   vector<string> Pattern;
@@ -99,40 +98,74 @@ vector<string> GetWinnigPatter(char board[3][3], char winner) {
   return Pattern;
 }
 
-void PrintHiglitedWin(char board[3][3], vector<string> pattern) {
+ArrayWithColors **PrintHiglitedWin(char board[3][3], vector<string> pattern) {
   string *ptrn = pattern.data();
 
-  pair<int, int> coord;
-  coord.first = stoi(ptrn[0]);
-  coord.second = stoi(ptrn[1]);
+  // ArrayWithColors **array = new ArrayWithColors *[3];
 
-  cout << coord.first << coord.second;
+  // for (int i = 0; i < 3; ++i) {
+  //   array[i] = new ArrayWithColors[3];
+  // }
 
+  ArrayWithColors **array;
   int tmp = 0;
+  string hightliteCords = ptrn[0];
+
+  bool color = false;
 
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
-      for (int k = 0; k < ptrn->length(); k++) {
-        coord.first = stoi(ptrn[i]);
-        coord.second = stoi(ptrn[i + 1]);
+
+      for (int k = 0; k < 3; k++) {
+        hightliteCords = ptrn[k];
+        if (hightliteCords[0] - '0' == i && hightliteCords[1] - '0' == j) {
+          color = true;
+        }
       }
-      // finish comparing to check if should highlight
-      cout << red << board[i][j];
+      array[i][j] = {(color) ? red : reset, board[i][j]};
+      color = false;
     }
-    cout << '\n';
   }
+
+  return array;
 }
 
-int main(int argc, char *argv[]) {
-  char board[3][3] = {{'X', 'X', 'X'}, {'#', 'O', 'O'}, {'#', '#', '#'}};
-  vector<string> coords = GetWinnigPatter(board, 'X');
-
-  for (auto move : coords) {
-    cout << move;
+void deleteColoredCharArray(ArrayWithColors **array, int rows) {
+  for (int i = 0; i < rows; ++i) {
+    delete[] array[i];
   }
+  delete[] array;
+}
 
-  cout << '\n' << '\n';
+int getConsoleWidth() {
+  struct winsize size;
+  ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
+  return size.ws_col;
+}
 
-  PrintHiglitedWin(board, coords);
-  return 0;
+void PrintHiglitedBoard(char board[3][3], char player) {
+
+  int width = getConsoleWidth() / 2;
+
+  vector<string> coords = GetWinnigPatter(board, player);
+
+  ArrayWithColors **array = PrintHiglitedWin(board, coords);
+
+  std::cout << string(width - 9, ' ') << "      1   2   3" << std::endl;
+  std::cout << string(width - 9, ' ') << "    ╔═══╦═══╦═══╗" << std::endl;
+  std::cout << string(width - 9, ' ') << " A  ║ " << array[0][0].color
+            << array[0][0].boardChar << reset << " ║ " << array[0][1].color
+            << array[0][1].boardChar << reset << " ║ " << array[0][2].color
+            << array[0][2].boardChar << reset << " ║" << std::endl;
+  std::cout << string(width - 9, ' ') << "    ╠═══╬═══╬═══╣" << std::endl;
+  std::cout << string(width - 9, ' ') << " B  ║ " << array[1][0].color
+            << array[1][0].boardChar << reset << " ║ " << array[1][1].color
+            << array[1][1].boardChar << reset << " ║ " << array[1][2].color
+            << array[1][2].boardChar << reset << " ║" << std::endl;
+  std::cout << string(width - 9, ' ') << "    ╠═══╬═══╬═══╣" << std::endl;
+  std::cout << string(width - 9, ' ') << " C  ║ " << array[2][0].color
+            << array[2][0].boardChar << reset << " ║ " << array[2][1].color
+            << array[2][1].boardChar << reset << " ║ " << array[2][2].color
+            << array[2][2].boardChar << reset << " ║" << std::endl;
+  std::cout << string(width - 9, ' ') << "    ╚═══╩═══╩═══╝" << std::endl;
 }

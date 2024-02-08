@@ -136,7 +136,7 @@ public:
   }
 };
 
-void CallWhileMenu() {
+void CallWholeMenu() {
   Base base;
 
   int selection = base.PrintFullMenu();
@@ -148,7 +148,7 @@ void CallWhileMenu() {
 
 int main(int argc, char *argv[]) {
 
-  CallWhileMenu();
+  CallWholeMenu();
 
   return 0;
 }
