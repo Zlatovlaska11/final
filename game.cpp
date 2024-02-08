@@ -1,5 +1,6 @@
 #include "ai_import.h"
 #include "import.h"
+#include <ctime>
 #include <curses.h>
 #include <iostream>
 #include <ncurses.h>
@@ -7,6 +8,7 @@
 #include <string>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include <utility>
 
 using namespace std;
 class Game {
@@ -60,7 +62,47 @@ public:
     return size.ws_col;
   }
 
-  void GetMove(char player, bool isItPLayerTurn) {
+  pair<int, int> ConvertMove(string move) {
+
+    pair<int, int> Moves;
+
+    switch (move[0]) {
+    case 'A':
+      Moves.first = 0;
+      break;
+    case 'B':
+      Moves.first = 1;
+      break;
+    case 'C':
+      Moves.first = 2;
+      break;
+    case 'a':
+      Moves.first = 0;
+      break;
+    case 'b':
+      Moves.first = 1;
+      break;
+    case 'c':
+      Moves.first = 2;
+      break;
+    }
+
+    switch (move[1]) {
+    case '1':
+      Moves.second = 0;
+      break;
+    case '2':
+      Moves.second = 1;
+      break;
+    case '3':
+      Moves.second = 2;
+      break;
+    default:
+      break;
+    }
+    return Moves;
+  }
+  void GetMove(char player, bool isItPLayerTurn, int dificulty) {
     PrintLogo();
     DisplayBoard(board);
     cout << endl;
@@ -69,7 +111,7 @@ public:
     int row;
     int col;
 
-    if (isItPLayerTurn) {
+    if (isItPLayerTurn || dificulty == 3) {
       // add selection ai by accepting one more parameter name dificulty and
       // deciding by this
       const string text = "inert your move: ";
@@ -88,44 +130,26 @@ public:
         cin >> _move;
       }
 
-      switch (_move[0]) {
-      case 'A':
-        row = 0;
-        break;
-      case 'B':
-        row = 1;
-        break;
-      case 'C':
-        row = 2;
-        break;
-      case 'a':
-        row = 0;
-        break;
-      case 'b':
-        row = 1;
-        break;
-      case 'c':
-        row = 2;
-        break;
-      }
+      pair<int, int> moves = ConvertMove(_move);
 
-      switch (_move[1]) {
-      case '1':
-        col = 0;
-        break;
-      case '2':
-        col = 1;
-        break;
-      case '3':
-        col = 2;
-        break;
-      default:
-        break;
-      }
+      row = moves.first;
+      col = moves.second;
+
     } else {
-      pair<int, int> move = GetBestMove(board, true, player);
-      row = move.first;
-      col = move.second;
+      if (dificulty == 2) {
+        pair<int, int> move = GetBestMove(board, true, player);
+        row = move.first;
+        col = move.second;
+      } else if (dificulty == 1) {
+        _move = AiMove_easy();
+        while (!CanPlay(_move)) {
+          _move = AiMove_easy();
+        }
+        pair<int, int> moves = ConvertMove(_move);
+
+        row = moves.first;
+        col = moves.second;
+      }
     }
 
     board[row][col] = player;
@@ -219,7 +243,7 @@ public:
 
     char selection;
 
-    cout << string(width - text.length(), ' ') << text;
+    cout << '\n' << string(width - 10, ' ') << text;
 
     cin >> selection;
 
@@ -234,7 +258,7 @@ public:
     }
   }
 
-  void GameLoop() {
+  void GameLoop(int dif) {
     int round = 0;
 
     bool didSomeOneWin = CheckForWin();
@@ -243,9 +267,9 @@ public:
         if (isBoardFull()) {
           break;
         }
-        GetMove('X', true);
+        GetMove('X', true, dif);
       } else {
-        GetMove('O', false);
+        GetMove('O', false, dif);
       }
       round++;
       didSomeOneWin = CheckForWin();
@@ -260,9 +284,7 @@ public:
       cout << string((getConsoleWidth() / 2) - 5, ' ') << "PLAYER 1 WON";
     }
 
-    // wait for enter press and than ask to play again
     //! ADD BOARD HIGHLIGHTING AFTER WIN TO SHOW HOW WIN WAS ACHIEVD
-    // bool wannaPlayAgain = playagain();
 
     cout << '\n'
          << string((getConsoleWidth() / 2) - 10, ' ')
@@ -278,26 +300,22 @@ public:
 
     getch();
 
-    // End the ncurses mode
     endwin();
 
     cout << "\033[2J\033[1;1H";
 
     if (playagain()) {
       ResetBoard(board);
-      GameLoop();
+      GameLoop(dif);
+    } else {
+      cout << "\033[2J\033[1;1H";
+      CallWhileMenu();
+      // add entry for main menu
     }
-    // PrintLogo();
-    //  cout << ch;
-    //   if (wannaPlayAgain) {
-    //     ResetBoard(board);
-    //     cout << "\033[2J\033[1;1H";
-    //     GameLoop();
-    //   }
   }
 };
 
-void StartGame() {
+void StartGame(int dif) {
   Game game;
-  game.GameLoop();
+  game.GameLoop(dif);
 }

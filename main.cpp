@@ -42,8 +42,8 @@ public:
   }
 
 private:
-  string options[4] = {"Start Easy game vs PC", "2. option", "3. option",
-                       "4. option"};
+  string options[4] = {"Start Easy game vs PC", "Start Hard Game vs PC",
+                       "2 Player Mode", "Settings"};
 
   void PrintHiglighted(int selection, int arrayLength) {
     for (int i = 0; i < arrayLength; i++) {
@@ -127,16 +127,16 @@ public:
   Select(int selection) { this->selection = selection; };
 
   void Selector() {
-    if (selection == 1) {
+    if (selection < 3) {
       cout << "\033[2J\033[1;1H";
-
-      StartGame();
+      StartGame(selection);
+    } else {
+      // add settings to select board theme and after game higliting
     }
   }
 };
 
-int main(int argc, char *argv[]) {
-
+void CallWhileMenu() {
   Base base;
 
   int selection = base.PrintFullMenu();
@@ -144,10 +144,14 @@ int main(int argc, char *argv[]) {
   Select select(selection);
 
   select.Selector();
+}
+
+int main(int argc, char *argv[]) {
+
+  CallWhileMenu();
 
   return 0;
 }
-
 void PrintInDaMiddle(string text) {
   Base base;
   base.PrintTextInTheMiddle(text, false);
