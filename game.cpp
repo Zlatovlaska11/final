@@ -1,6 +1,5 @@
 #include "ai_import.h"
 #include "import.h"
-#include <cmath>
 #include <curses.h>
 #include <iostream>
 #include <ncurses.h>
@@ -531,7 +530,6 @@ public:
     }
   }
 };
-
 void StartGame(int dif) {
   Game game;
   game.GameLoop(dif);
