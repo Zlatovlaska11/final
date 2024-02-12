@@ -17,7 +17,6 @@
 using namespace std;
 
 class Base {
-
   int getConsoleWidth() {
     struct winsize size;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
@@ -43,7 +42,7 @@ public:
   }
 
 private:
-  string options[4] = {"Easy PC", "Hard PC", "2 Player Mode"};
+  string options[4] = {"Easy PC", "Hard PC", "2 Player Mode", "Exit"};
 
   void PrintHiglighted(int selection, int arrayLength) {
     for (int i = 0; i < arrayLength; i++) {
@@ -131,7 +130,8 @@ public:
       cout << "\033[2J\033[1;1H";
       StartGame(selection);
     } else {
-      // add settings to select board theme and after game higliting
+      cout << "\033[2J\033[1;1H";
+      exit(0);
     }
   }
 };
