@@ -109,6 +109,10 @@ public:
     string *ptrn = pattern.data();
 
     ArrayWithColors **array = new ArrayWithColors *[3];
+    
+    if(array == nullptr){
+      throw "alocation error";
+    }
 
     for (int i = 0; i < 3; ++i) {
       array[i] = new ArrayWithColors[3];
@@ -156,38 +160,25 @@ public:
     vector<string> coords = GetWinnigPatter(board, player);
     ArrayWithColors **array = ArrayHiglitedWin(board, coords);
 
-    if (round < 9) {
 
-      std::cout << string(width - 9, ' ') << "      1   2   3" << std::endl;
-      std::cout << string(width - 9, ' ') << "    ╔═══╦═══╦═══╗" << std::endl;
-      std::cout << string(width - 9, ' ') << " A  ║ " << array[0][0].color
-                << array[0][0].boardChar << reset << " ║ " << array[0][1].color
-                << array[0][1].boardChar << reset << " ║ " << array[0][2].color
-                << array[0][2].boardChar << reset << " ║" << std::endl;
-      std::cout << string(width - 9, ' ') << "    ╠═══╬═══╬═══╣" << std::endl;
-      std::cout << string(width - 9, ' ') << " B  ║ " << array[1][0].color
-                << array[1][0].boardChar << reset << " ║ " << array[1][1].color
-                << array[1][1].boardChar << reset << " ║ " << array[1][2].color
-                << array[1][2].boardChar << reset << " ║" << std::endl;
-      std::cout << string(width - 9, ' ') << "    ╠═══╬═══╬═══╣" << std::endl;
-      std::cout << string(width - 9, ' ') << " C  ║ " << array[2][0].color
-                << array[2][0].boardChar << reset << " ║ " << array[2][1].color
-                << array[2][1].boardChar << reset << " ║ " << array[2][2].color
-                << array[2][2].boardChar << reset << " ║" << std::endl;
-      std::cout << string(width - 9, ' ') << "    ╚═══╩═══╩═══╝" << std::endl;
-    } else {
-      std::cout << string(width - 9, ' ') << "      1   2   3" << std::endl;
-      std::cout << string(width - 9, ' ') << "    ╔═══╦═══╦═══╗" << std::endl;
-      std::cout << string(width - 9, ' ') << " A  ║ " << board[0][0] << " ║ "
-                << board[0][1] << " ║ " << board[0][2] << " ║" << std::endl;
-      std::cout << string(width - 9, ' ') << "    ╠═══╬═══╬═══╣" << std::endl;
-      std::cout << string(width - 9, ' ') << " B  ║ " << board[1][0] << " ║ "
-                << board[1][1] << " ║ " << board[1][2] << " ║" << std::endl;
-      std::cout << string(width - 9, ' ') << "    ╠═══╬═══╬═══╣" << std::endl;
-      std::cout << string(width - 9, ' ') << " C  ║ " << board[2][0] << " ║ "
-                << board[2][1] << " ║ " << board[2][2] << " ║" << std::endl;
-      std::cout << string(width - 9, ' ') << "    ╚═══╩═══╩═══╝" << std::endl;
-    }
+    std::cout << string(width - 9, ' ') << "      1   2   3" << std::endl;
+    std::cout << string(width - 9, ' ') << "    ╔═══╦═══╦═══╗" << std::endl;
+    std::cout << string(width - 9, ' ') << " A  ║ " << array[0][0].color
+      << array[0][0].boardChar << reset << " ║ " << array[0][1].color
+      << array[0][1].boardChar << reset << " ║ " << array[0][2].color
+      << array[0][2].boardChar << reset << " ║" << std::endl;
+    std::cout << string(width - 9, ' ') << "    ╠═══╬═══╬═══╣" << std::endl;
+    std::cout << string(width - 9, ' ') << " B  ║ " << array[1][0].color
+      << array[1][0].boardChar << reset << " ║ " << array[1][1].color
+      << array[1][1].boardChar << reset << " ║ " << array[1][2].color
+      << array[1][2].boardChar << reset << " ║" << std::endl;
+    std::cout << string(width - 9, ' ') << "    ╠═══╬═══╬═══╣" << std::endl;
+    std::cout << string(width - 9, ' ') << " C  ║ " << array[2][0].color
+      << array[2][0].boardChar << reset << " ║ " << array[2][1].color
+      << array[2][1].boardChar << reset << " ║ " << array[2][2].color
+      << array[2][2].boardChar << reset << " ║" << std::endl;
+    std::cout << string(width - 9, ' ') << "    ╚═══╩═══╩═══╝" << std::endl;
+
     deleteColoredCharArray(array, 3);
   }
 };
@@ -486,12 +477,21 @@ public:
     }
 
     cout << "\033[2J\033[1;1H";
+    
+
 
     PrintLogo();
+    
+    if (round < 9){
 
-    Settings set;
+      Settings set;
 
-    set.PrintHiglitedBoard(board, (round % 2 != 0) ? 'X' : 'O', round);
+      set.PrintHiglitedBoard(board, (round % 2 != 0) ? 'X' : 'O', round);
+
+    }else {
+      DisplayBoard(board);
+    }
+    
 
     cout << '\n';
     if (isBoardFull()) {
