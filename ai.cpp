@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <climits>
 #include <curses.h>
+#include <optional>
 #include <unistd.h>
 #include <utility>
 using namespace std;
@@ -114,7 +115,7 @@ public:
       return minVal;
     }
   }
-  pair<int, int> GetBestMove(char board[3][3], bool maxingPlayer, char player) {
+  optional<pair<int, int>> GetBestMove(char board[3][3], bool maxingPlayer, char player) {
     pair<int, int> BestMoves;
 
     int BestEval = (player == 'X') ? INT_MIN : INT_MAX;
@@ -144,10 +145,16 @@ public:
   }
 };
 
-pair<int, int> GetBestMove(char board[3][3], bool MaxingPlayerTurn,
+optional<pair<int, int>> GetBestMoves(char board[3][3], bool MaxingPlayerTurn,
                            char player) {
   minmaxAi ai;
-  pair<int, int> bestMove = ai.GetBestMove(board, MaxingPlayerTurn, player);
+  optional<pair<int, int>> bestMove = ai.GetBestMove(board, MaxingPlayerTurn, player);
   sleep(1);
-  return bestMove;
+
+  if (bestMove){
+    return bestMove;
+  }
+  else {
+    throw "best move is null";
+  }
 }

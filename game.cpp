@@ -309,9 +309,9 @@ public:
 
     } else {
       if (dificulty == 2) {
-        pair<int, int> move = GetBestMove(board, true, player);
-        row = move.first;
-        col = move.second;
+        optional<pair<int, int>> move = GetBestMoves(board, true, player);
+        row = move->first;
+        col = move->second;
       } else if (dificulty == 1) {
         _move = AiMove_easy();
         while (!CanPlay(_move)) {
@@ -478,8 +478,6 @@ public:
 
     cout << "\033[2J\033[1;1H";
     
-
-
     PrintLogo();
     
     if (round < 9){
